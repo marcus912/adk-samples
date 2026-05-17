@@ -67,7 +67,7 @@ This diagram outlines the agent's workflow, designed to provide informed and con
     Follow the steps in the file to set up the environment variables.
 
 4. **Setup Corpus:**
-    If you have an existing corpus in Vertex AI RAG Engine, please set corpus information in your .env file. For example: RAG_CORPUS='projects/123/locations/us-central1/ragCorpora/456'.
+    If you have an existing corpus in Vertex AI RAG Engine, please set corpus information in your .env file. For example: RAG_CORPUS='projects/123/locations/us-east1/ragCorpora/456'.
 
     If you don't have a corpus setup yet, please follow "How to upload my file to my RAG corpus" section. The `prepare_corpus_and_data.py` script will automatically create a corpus (if needed) and update the `RAG_CORPUS` variable in your `.env` file with the resource name of the created or retrieved corpus.
 
@@ -84,7 +84,7 @@ The `rag/shared_libraries/prepare_corpus_and_data.py` script helps you set up a 
     Ensure your `.env` file (copied from `.env.example`) has the following variables set:
     ```
     GOOGLE_CLOUD_PROJECT=your-project-id
-    GOOGLE_CLOUD_LOCATION=your-location  # e.g., us-central1
+    GOOGLE_CLOUD_LOCATION=your-location  # e.g., us-east1
     ```
 
 3.  **Configure and run the preparation script:**
@@ -214,7 +214,7 @@ This evaluation helps ensure the agent correctly leverages the RAG capabilities 
 
 ## Deploying the Agent
 
-The Agent can be deployed to Vertex AI Agent Engine using the following
+The Agent can be deployed to Agent Runtime using the following
 commands:
 
 ```bash
@@ -224,10 +224,10 @@ uv run python deployment/deploy.py
 After deploying the agent, you'll be able to read the following INFO log message:
 
 ```
-Deployed agent to Vertex AI Agent Engine successfully, resource name: projects/<PROJECT_NUMBER>/locations/us-central1/reasoningEngines/<AGENT_ENGINE_ID>
+Deployed agent to Vertex AI Agent Engine successfully, resource name: projects/<PROJECT_NUMBER>/locations/us-east1/reasoningEngines/<AGENT_ENGINE_ID>
 ```
 
-Please note your Agent Engine resource name and update `.env` file accordingly as this is crucial for testing the remote agent.
+Please note your Agent Runtime resource name and update `.env` file accordingly as this is crucial for testing the remote agent.
 
 You may also modify the deployment script for your use cases.
 
@@ -239,14 +239,14 @@ After deploying the agent, follow these steps to test it:
    - Open your `.env` file.
    - The `AGENT_ENGINE_ID` should have been automatically updated by the `deployment/deploy.py` script when you deployed the agent. Verify that it is set correctly:
      ```
-     AGENT_ENGINE_ID=projects/<PROJECT_NUMBER>/locations/us-central1/reasoningEngines/<AGENT_ENGINE_ID>
+     AGENT_ENGINE_ID=projects/<PROJECT_NUMBER>/locations/us-east1/reasoningEngines/<AGENT_ENGINE_ID>
      ```
 
 2. **Grant RAG Corpus Access Permissions:**
    - Ensure your `.env` file has the following variables set correctly:
      ```
      GOOGLE_CLOUD_PROJECT=your-project-id
-     RAG_CORPUS=projects/<project-number>/locations/us-central1/ragCorpora/<corpus-id>
+     RAG_CORPUS=projects/<project-number>/locations/us-east1/ragCorpora/<corpus-id>
      ```
    - Run the permissions script:
      ```bash
@@ -270,13 +270,20 @@ After deploying the agent, follow these steps to test it:
 
 The test script includes example queries about Alphabet's 2025 10-K report. You can modify the queries in `deployment/run.py` to test different aspects of your deployed agent.
 
-### Recommended: Using Agent Starter Pack
+### Recommended: Using Google Agents CLI
 
-The Agent Starter Pack is the recommended way to create and deploy a production-ready version of this agent. We have built custom lifecycle hooks into this template so that the Agent Starter Pack automatically handles building your RAG corpus and granting IAM permissions during deployment.
+The Google Agents CLI is the recommended way to create and deploy a production-ready version of this agent. The template is wired so that deployment automatically handles building your RAG corpus and granting IAM permissions.
 
-To create your project using `uv`:
+**Install the CLI** (one-time):
+
 ```bash
-uvx agent-starter-pack create my-rag-agent -a adk@RAG -d agent_engine -ds vertex_ai_search
+uvx google-agents-cli setup
+```
+
+**Create the project from this sample** (replace `my-rag-agent` with your project name):
+
+```bash
+agents-cli create my-rag-agent -a adk@RAG -d agent_runtime -ds agent_platform_search
 cd my-rag-agent
 ```
 
@@ -285,7 +292,7 @@ Next, run the installation command. This will prompt you to automatically build 
 make install
 ```
 
-Finally, deploy the agent to Google Cloud. This will package your agent, push it to Vertex AI Agent Engine, and automatically grant the new Agent Identity permissions to query your RAG Corpus:
+Finally, deploy the agent to Google Cloud. This will package your agent, push it to Agent Runtime, and automatically grant the new Agent Identity permissions to query your RAG Corpus:
 ```bash
 make backend
 ```

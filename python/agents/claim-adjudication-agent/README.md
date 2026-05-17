@@ -7,7 +7,7 @@ The **Health Claim Adjudication Agent** is a sophisticated, multi-agent workflow
 The agent streamlines the end-to-end lifecycle of a cashless health insurance claim:
 1.  **Discovery**: Retrieves medical documents and invoices directly from Google Cloud Storage for a specific claim ID.
 2.  **Admissibility**: Verifies policy coverage, identifies pre-existing diseases (PED), and checks waiting periods.
-3.  **Adjudication**: Analyzes hospital bills against policy terms, co-payments, deductibles, and hospital MOUs.
+3.  **Adjudication**: Analyzes hospital bills against policy terms, co-payments, deductibles.
 4.  **Synthesis**: Consolidates technical findings into a professional, structured report for final approval.
 
 ## Agent Details
@@ -63,10 +63,10 @@ Set up your `.env` file with the following credentials:
 ```bash
 GOOGLE_GENAI_USE_VERTEXAI=1
 GOOGLE_CLOUD_PROJECT=<your-project-id>
-GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_CLOUD_LOCATION=<region>
 GEMINI_FLASH=gemini-2.5-flash
 CLAIM_DOCUMENTS_BUCKET=<your-gcs-bucket-name>
-CLAIM_DOCUMENTS_BUCKET_FOLDER=health_claim_documents
+CLAIM_DOCUMENTS_BUCKET_FOLDER=<doc_folder>
 ```
 
 ## Running the Agent
@@ -98,8 +98,8 @@ I am now initiating the parallel evaluation of admissibility and financial adjud
 - Status: Admissible
 - Total Billed: ₹1,50,000
 - Total Payable: ₹1,35,000
-- Deductions: ₹15,000 (MOU Disallowance)
-- Conclusion: The claim is approved as per the 'Elevate' policy terms.
+- Deductions: ₹15,000
+- Conclusion: The claim is approved.
 ```
 
 ## Running Tests
@@ -119,31 +119,23 @@ uv run pytest eval/test_eval.py
 
 You can also run all tests at once with `uv run pytest`.
 
-### Alternative: Using Agent Starter Pack
+### Alternative: Using Google Agents CLI
 
-You can also use the [Agent Starter Pack](https://goo.gle/agent-starter-pack) to create a production-ready version of this agent with additional deployment options:
+You can also use the [Google Agents CLI](https://github.com/google/agents-cli) to create a production-ready version of this agent with additional deployment options.
+
+**Install the CLI** (one-time):
 
 ```bash
-# Create and activate a virtual environment
-python -m venv .venv && source .venv/bin/activate # On Windows: .venv\Scripts\activate
-
-# Install the starter pack and create your project
-pip install --upgrade agent-starter-pack
-agent-starter-pack create my-claim-adjudication-agent -a adk@claim-adjudication-agent
+uvx google-agents-cli setup
 ```
 
-<details>
-<summary>⚡️ Alternative: Using uv</summary>
+**Create the project from this sample** (replace `my-claim-adjudication-agent` with your project name):
 
-If you have [`uv`](https://github.com/astral-sh/uv) installed, you can create and set up your project with a single command:
 ```bash
-uvx agent-starter-pack create my-claim-adjudication-agent -a adk@claim-adjudication-agent
+agents-cli create my-claim-adjudication-agent -a adk@claim-adjudication-agent
 ```
-This command handles creating the project without needing to pre-install the package into a virtual environment.
 
-</details>
-
-The starter pack will prompt you to select deployment options and provides additional production-ready features including automated CI/CD deployment scripts.
+The Google Agents CLI will prompt you to select deployment options and provides additional production-ready features including automated CI/CD deployment scripts.
 
 ## Customization
 
